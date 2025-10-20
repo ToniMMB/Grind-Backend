@@ -52,7 +52,7 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 // Middlewares
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:8081', 'http://192.168.1.58:5173', env.FRONTEND_URL],
+  origin: ['http://localhost:5173', 'http://localhost:8080', 'http://localhost:8081', 'http://192.168.1.58:5173', env.FRONTEND_URL],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
