@@ -9,6 +9,7 @@ export const validateBody = (schema: ZodSchema) => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
+        console.error('❌ Errores de validación:', error.errors);
         const errors = error.errors.map((err) => ({
           field: err.path.join('.'),
           message: err.message,

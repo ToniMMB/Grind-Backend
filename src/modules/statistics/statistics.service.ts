@@ -34,12 +34,30 @@ export class StatisticsService {
       },
     });
 
+    const totalMinutes = todayStats?.totalMinutes || 0;
+    
+    console.log('⏰ [DASHBOARD] Tiempo de enfoque hoy:', totalMinutes, 'minutos');
+    console.log('⏰ [DASHBOARD] En horas:', Math.floor(totalMinutes / 60), 'h', totalMinutes % 60, 'min');
+    
+    // VALIDACIÓN CRÍTICA: Tiempo no puede exceder 24 horas
+    if (totalMinutes > 1440) {
+      console.error('❌ [DASHBOARD] ERROR CRÍTICO: Tiempo de enfoque excede 24h');
+      console.error('Total minutos:', totalMinutes);
+      console.error('Fecha:', todayStr);
+      console.error('UserId:', userId);
+      console.error('POSIBLES CAUSAS:');
+      console.error('1. Sesiones duplicadas en DailyStatistic');
+      console.error('2. Cálculo incorrecto de totalMinutes');
+      console.error('3. Datos corruptos en la BD');
+      console.error('ACCIÓN: Revisar tabla DailyStatistic para esta fecha');
+    }
+
     const todayData = {
       date: todayStr,
-      totalMinutes: todayStats?.totalMinutes || 0,
+      totalMinutes: totalMinutes > 1440 ? 0 : totalMinutes, // Si excede 24h, retornar 0
       goalMinutes: user.dailyGoalMinutes,
       goalPercentage: Math.min(
-        Math.round(((todayStats?.totalMinutes || 0) / user.dailyGoalMinutes) * 100),
+        Math.round(((totalMinutes || 0) / user.dailyGoalMinutes) * 100),
         100
       ),
       tasksCompleted: todayStats?.tasksCompleted || 0,
@@ -92,12 +110,107 @@ export class StatisticsService {
       },
     });
 
+    console.log('📅 [DASHBOARD] Día de la semana:', dayOfWeek);
+    console.log('📋 [DASHBOARD] Bloques programados encontrados:', scheduledBlocks.length);
+
+    // CRÍTICO: Detectar duplicados por nombre + hora
+    const blockKeys = new Map();
+    scheduledBlocks.forEach(block => {
+      const key = `${block.name}_${block.startTime}_${block.endTime}`;
+      if (blockKeys.has(key)) {
+        console.error('⚠️ [DASHBOARD] BLOQUE DUPLICADO DETECTADO:', {
+          nombre: block.name,
+          hora: `${block.startTime} - ${block.endTime}`,
+          id1: blockKeys.get(key),
+          id2: block.id
+        });
+      } else {
+        blockKeys.set(key, block.id);
+      }
+    });
+
+    // Calcular meta dinámica (duración total de bloques programados)
+    let dailyGoalMinutes = 0;
+    scheduledBlocks.forEach(block => {
+      const [startHour, startMin] = block.startTime.split(':').map(Number);
+      const [endHour, endMin] = block.endTime.split(':').map(Number);
+      const durationMinutes = (endHour * 60 + endMin) - (startHour * 60 + startMin);
+      
+      console.log(`  - ${block.name}: ${block.startTime}-${block.endTime} = ${durationMinutes}min`);
+      dailyGoalMinutes += durationMinutes;
+    });
+
+    console.log('🎯 [DASHBOARD] Meta total calculada:', dailyGoalMinutes, 'minutos');
+    console.log('🎯 [DASHBOARD] Meta en horas:', Math.floor(dailyGoalMinutes / 60), 'h', dailyGoalMinutes % 60, 'min');
+
+    // VALIDACIÓN CRÍTICA: Meta no puede exceder 24 horas
+    if (dailyGoalMinutes > 1440) {
+      console.error('❌ [DASHBOARD] ERROR CRÍTICO: Meta excede 24h');
+      console.error('Total minutos:', dailyGoalMinutes);
+      console.error('Total bloques:', scheduledBlocks.length);
+      console.error('POSIBLES CAUSAS:');
+      console.error('1. Bloques duplicados en la BD');
+      console.error('2. Duraciones incorrectas');
+      console.error('3. Bloques mal configurados');
+      console.error('ACCIÓN: Revisar tabla FocusBlock para userId:', userId);
+      
+      // Retornar 0 para evitar mostrar datos incorrectos
+      dailyGoalMinutes = 0;
+    }
+
+    // Agregar duración a cada bloque para el frontend
+    const scheduledBlocksWithDuration = scheduledBlocks.map(block => {
+      const [startHour, startMin] = block.startTime.split(':').map(Number);
+      const [endHour, endMin] = block.endTime.split(':').map(Number);
+      const durationMinutes = (endHour * 60 + endMin) - (startHour * 60 + startMin);
+      
+      // Formatear duración
+      const hours = Math.floor(durationMinutes / 60);
+      const minutes = durationMinutes % 60;
+      let duration = '';
+      if (hours > 0) {
+        duration = minutes > 0 ? `${hours}h ${minutes}min` : `${hours}h`;
+      } else {
+        duration = `${minutes}min`;
+      }
+      
+      return {
+        ...block,
+        duration,
+        durationMinutes,
+      };
+    });
+
+    // Tareas pendientes (máximo 5 para el dashboard)
+    const pendingTasks = await prisma.task.findMany({
+      where: {
+        userId,
+        completed: false,
+      },
+      select: {
+        id: true,
+        title: true,
+        priority: true,
+        dueDate: true,
+        category: true,
+      },
+      orderBy: [
+        { priority: 'desc' },
+        { createdAt: 'asc' },
+      ],
+      take: 5,
+    });
+
     const dashboard = {
-      today: todayData,
+      today: {
+        ...todayData,
+        dailyGoalMinutes, // Meta dinámica calculada
+      },
       user: userData,
       hasActiveSession,
       activeSession: activeSessionData,
-      scheduledBlocks,
+      scheduledBlocks: scheduledBlocksWithDuration,
+      pendingTasks,
     };
 
     // Cachear por 5 minutos (si Redis está disponible)

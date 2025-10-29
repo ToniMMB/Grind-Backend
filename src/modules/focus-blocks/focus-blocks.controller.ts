@@ -47,11 +47,14 @@ export class FocusBlocksController {
         return ResponseUtil.unauthorized(res);
       }
 
+      console.log('📥 Datos recibidos en el backend:', req.body);
       const data: CreateFocusBlockInput = req.body;
       const focusBlock = await this.focusBlocksService.createFocusBlock(req.user.id, data);
+      console.log('✅ Bloque creado en BD:', focusBlock);
       
       return ResponseUtil.created(res, { focusBlock }, 'Focus block created successfully');
     } catch (error) {
+      console.error('❌ Error en createFocusBlock:', error);
       next(error);
     }
   };
