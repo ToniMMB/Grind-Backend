@@ -11,40 +11,43 @@ export class FocusBlocksController {
     this.focusBlocksService = new FocusBlocksService();
   }
 
-  getFocusBlocks = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  getFocusBlocks = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
-      const query: QueryFocusBlocksInput = req.query;
+      const query = req.query as unknown as QueryFocusBlocksInput;
       const focusBlocks = await this.focusBlocksService.getFocusBlocks(req.user.id, query);
       
-      return ResponseUtil.success(res, { focusBlocks });
+      ResponseUtil.success(res, { focusBlocks });
     } catch (error) {
       next(error);
     }
   };
 
-  getFocusBlockById = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  getFocusBlockById = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
       const { id } = req.params;
       const focusBlock = await this.focusBlocksService.getFocusBlockById(id, req.user.id);
       
-      return ResponseUtil.success(res, { focusBlock });
+      ResponseUtil.success(res, { focusBlock });
     } catch (error) {
       next(error);
     }
   };
 
-  createFocusBlock = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  createFocusBlock = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
       console.log('📥 Datos recibidos en el backend:', req.body);
@@ -52,39 +55,41 @@ export class FocusBlocksController {
       const focusBlock = await this.focusBlocksService.createFocusBlock(req.user.id, data);
       console.log('✅ Bloque creado en BD:', focusBlock);
       
-      return ResponseUtil.created(res, { focusBlock }, 'Focus block created successfully');
+      ResponseUtil.created(res, { focusBlock }, 'Focus block created successfully');
     } catch (error) {
       console.error('❌ Error en createFocusBlock:', error);
       next(error);
     }
   };
 
-  updateFocusBlock = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  updateFocusBlock = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
       const { id } = req.params;
       const data: UpdateFocusBlockInput = req.body;
       const focusBlock = await this.focusBlocksService.updateFocusBlock(id, req.user.id, data);
       
-      return ResponseUtil.success(res, { focusBlock }, 'Focus block updated successfully');
+      ResponseUtil.success(res, { focusBlock }, 'Focus block updated successfully');
     } catch (error) {
       next(error);
     }
   };
 
-  deleteFocusBlock = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  deleteFocusBlock = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
       const { id } = req.params;
       const result = await this.focusBlocksService.deleteFocusBlock(id, req.user.id);
       
-      return ResponseUtil.success(res, result);
+      ResponseUtil.success(res, result);
     } catch (error) {
       next(error);
     }

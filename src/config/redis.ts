@@ -17,13 +17,15 @@ if (env.REDIS_URL) {
     console.log('✅ Redis connected');
   });
 
-  // Conectar automáticamente
-  try {
-    await redis.connect();
-  } catch (error) {
-    console.warn('⚠️  Redis not available, continuing without cache');
-    redis = null;
-  }
+  // Conectar automáticamente en IIFE async
+  (async () => {
+    try {
+      await redis!.connect();
+    } catch (error) {
+      console.warn('⚠️  Redis not available, continuing without cache');
+      redis = null;
+    }
+  })();
 } else {
   console.log('ℹ️  Redis not configured, running without cache');
 }

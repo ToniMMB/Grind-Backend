@@ -3,7 +3,7 @@ import { PasswordUtil } from '../../utils/password.util.js';
 import { JWTUtil } from '../../utils/jwt.util.js';
 import { ApiError } from '../../middlewares/error.middleware.js';
 import { RegisterInput, LoginInput } from './auth.validation.js';
-import { PREDEFINED_BLOCKS } from '../../../prisma/seed.js';
+import { PREDEFINED_BLOCKS } from '../../constants/predefined-blocks.js';
 
 export class AuthService {
   async register(data: RegisterInput) {

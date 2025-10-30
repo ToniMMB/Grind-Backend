@@ -1,7 +1,10 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PREDEFINED_BLOCKS = void 0;
+const client_1 = require("@prisma/client");
+const prisma = new client_1.PrismaClient();
 // Bloques predefinidos que se crean automáticamente al registrar un usuario
-export const PREDEFINED_BLOCKS = [
+exports.PREDEFINED_BLOCKS = [
     {
         name: "Enfoque láser",
         description: "Tu hora diaria de enfoque de 2 a 3 pm, de lunes a viernes",

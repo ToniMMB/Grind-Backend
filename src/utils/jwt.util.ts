@@ -1,18 +1,20 @@
-import jwt from 'jsonwebtoken';
+import jwt, { Secret } from 'jsonwebtoken';
 import env from '../config/env.js';
 import { TokenPayload, Tokens } from '../types/index.js';
 
 export class JWTUtil {
   static generateAccessToken(payload: TokenPayload): string {
-    return jwt.sign(payload, env.JWT_ACCESS_SECRET, {
+    const secret: Secret = env.JWT_ACCESS_SECRET;
+    return jwt.sign(payload, secret, {
       expiresIn: env.JWT_ACCESS_EXPIRY,
-    });
+    } as any);
   }
 
   static generateRefreshToken(payload: TokenPayload): string {
-    return jwt.sign(payload, env.JWT_REFRESH_SECRET, {
+    const secret: Secret = env.JWT_REFRESH_SECRET;
+    return jwt.sign(payload, secret, {
       expiresIn: env.JWT_REFRESH_EXPIRY,
-    });
+    } as any);
   }
 
   static generateTokens(payload: TokenPayload): Tokens {
@@ -24,7 +26,8 @@ export class JWTUtil {
 
   static verifyAccessToken(token: string): TokenPayload {
     try {
-      return jwt.verify(token, env.JWT_ACCESS_SECRET) as TokenPayload;
+      const secret: Secret = env.JWT_ACCESS_SECRET;
+      return jwt.verify(token, secret) as TokenPayload;
     } catch (error) {
       throw new Error('Invalid or expired access token');
     }
@@ -32,7 +35,8 @@ export class JWTUtil {
 
   static verifyRefreshToken(token: string): TokenPayload {
     try {
-      return jwt.verify(token, env.JWT_REFRESH_SECRET) as TokenPayload;
+      const secret: Secret = env.JWT_REFRESH_SECRET;
+      return jwt.verify(token, secret) as TokenPayload;
     } catch (error) {
       throw new Error('Invalid or expired refresh token');
     }

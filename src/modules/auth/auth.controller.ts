@@ -11,44 +11,45 @@ export class AuthController {
     this.authService = new AuthService();
   }
 
-  register = async (req: Request, res: Response, next: NextFunction) => {
+  register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const data: RegisterInput = req.body;
       const result = await this.authService.register(data);
-      return ResponseUtil.created(res, result, 'User registered successfully');
+      ResponseUtil.created(res, result, 'User registered successfully');
     } catch (error) {
       next(error);
     }
   };
 
-  login = async (req: Request, res: Response, next: NextFunction) => {
+  login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const data: LoginInput = req.body;
       const result = await this.authService.login(data);
-      return ResponseUtil.success(res, result, 'Login successful');
+      ResponseUtil.success(res, result, 'Login successful');
     } catch (error) {
       next(error);
     }
   };
 
-  refresh = async (req: Request, res: Response, next: NextFunction) => {
+  refresh = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { refreshToken }: RefreshTokenInput = req.body;
       const result = await this.authService.refreshToken(refreshToken);
-      return ResponseUtil.success(res, result);
+      ResponseUtil.success(res, result);
     } catch (error) {
       next(error);
     }
   };
 
-  logout = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  logout = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
       
       const result = await this.authService.logout(req.user.id);
-      return ResponseUtil.success(res, result);
+      ResponseUtil.success(res, result);
     } catch (error) {
       next(error);
     }

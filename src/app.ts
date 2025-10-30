@@ -50,14 +50,43 @@ const swaggerOptions = {
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
-// Middlewares
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:8080', 'http://localhost:8081', 'http://192.168.1.58:5173', env.FRONTEND_URL],
+// Middlewares - Configurar CORS para soportar Vercel
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:8080',
+  'http://localhost:8081',
+  'http://192.168.1.58:5173',
+  env.FRONTEND_URL,
+];
+
+const vercelDomainRegex = /^https:\/\/[a-zA-Z0-9-]+\.vercel\.app$/;
+
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    // Permitir requests sin origin (como mobile apps, curl requests, etc)
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    // Verificar contra origins permitidos
+    const isAllowedOrigin = allowedOrigins.some(allowed => allowed === origin);
+    
+    // Verificar contra regex de Vercel
+    const isVercelDomain = vercelDomainRegex.test(origin);
+
+    if (isAllowedOrigin || isVercelDomain) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS policy: origin ${origin} not allowed`));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 200
-}));
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

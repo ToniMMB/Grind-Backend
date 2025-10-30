@@ -11,55 +11,59 @@ export class UsersController {
     this.usersService = new UsersService();
   }
 
-  getProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  getProfile = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
       const user = await this.usersService.getProfile(req.user.id);
-      return ResponseUtil.success(res, user);
+      ResponseUtil.success(res, user);
     } catch (error) {
       next(error);
     }
   };
 
-  updateProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  updateProfile = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
       const data: UpdateProfileInput = req.body;
       const user = await this.usersService.updateProfile(req.user.id, data);
-      return ResponseUtil.success(res, user, 'Profile updated successfully');
+      ResponseUtil.success(res, user, 'Profile updated successfully');
     } catch (error) {
       next(error);
     }
   };
 
-  updateSettings = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  updateSettings = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
       const data: UpdateSettingsInput = req.body;
       const settings = await this.usersService.updateSettings(req.user.id, data);
-      return ResponseUtil.success(res, { settings }, 'Settings updated successfully');
+      ResponseUtil.success(res, { settings }, 'Settings updated successfully');
     } catch (error) {
       next(error);
     }
   };
 
-  deleteAccount = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  deleteAccount = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
       const result = await this.usersService.deleteAccount(req.user.id);
-      return ResponseUtil.success(res, result);
+      ResponseUtil.success(res, result);
     } catch (error) {
       next(error);
     }

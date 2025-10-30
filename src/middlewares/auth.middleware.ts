@@ -3,18 +3,20 @@ import { AuthRequest } from '../types/index.js';
 import { JWTUtil } from '../utils/jwt.util.js';
 import { ResponseUtil } from '../utils/response.util.js';
 
-export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction): void => {
   try {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      return ResponseUtil.unauthorized(res, 'No authorization header provided');
+      ResponseUtil.unauthorized(res, 'No authorization header provided');
+      return;
     }
 
     const parts = authHeader.split(' ');
 
     if (parts.length !== 2 || parts[0] !== 'Bearer') {
-      return ResponseUtil.unauthorized(res, 'Invalid authorization header format');
+      ResponseUtil.unauthorized(res, 'Invalid authorization header format');
+      return;
     }
 
     const token = parts[1];
@@ -27,10 +29,10 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
       };
       next();
     } catch (error) {
-      return ResponseUtil.unauthorized(res, 'Invalid or expired token');
+      ResponseUtil.unauthorized(res, 'Invalid or expired token');
     }
   } catch (error) {
-    return ResponseUtil.serverError(res, 'Authentication error');
+    ResponseUtil.serverError(res, 'Authentication error');
   }
 };
 

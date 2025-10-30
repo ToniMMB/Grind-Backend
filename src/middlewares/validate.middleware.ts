@@ -3,7 +3,7 @@ import { ZodSchema, ZodError } from 'zod';
 import { ResponseUtil } from '../utils/response.util.js';
 
 export const validateBody = (schema: ZodSchema) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     try {
       schema.parse(req.body);
       next();
@@ -14,15 +14,16 @@ export const validateBody = (schema: ZodSchema) => {
           field: err.path.join('.'),
           message: err.message,
         }));
-        return ResponseUtil.error(res, 'Validation failed', 400);
+        ResponseUtil.error(res, 'Validation failed', 400);
+      } else {
+        ResponseUtil.serverError(res);
       }
-      return ResponseUtil.serverError(res);
     }
   };
 };
 
 export const validateQuery = (schema: ZodSchema) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     try {
       schema.parse(req.query);
       next();
@@ -32,15 +33,16 @@ export const validateQuery = (schema: ZodSchema) => {
           field: err.path.join('.'),
           message: err.message,
         }));
-        return ResponseUtil.error(res, 'Query validation failed', 400);
+        ResponseUtil.error(res, 'Query validation failed', 400);
+      } else {
+        ResponseUtil.serverError(res);
       }
-      return ResponseUtil.serverError(res);
     }
   };
 };
 
 export const validateParams = (schema: ZodSchema) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     try {
       schema.parse(req.params);
       next();
@@ -50,9 +52,10 @@ export const validateParams = (schema: ZodSchema) => {
           field: err.path.join('.'),
           message: err.message,
         }));
-        return ResponseUtil.error(res, 'Params validation failed', 400);
+        ResponseUtil.error(res, 'Params validation failed', 400);
+      } else {
+        ResponseUtil.serverError(res);
       }
-      return ResponseUtil.serverError(res);
     }
   };
 };

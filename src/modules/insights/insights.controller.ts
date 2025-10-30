@@ -11,60 +11,64 @@ export class InsightsController {
     this.insightsService = new InsightsService();
   }
 
-  getInsights = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  getInsights = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
-      const query: QueryInsightsInput = req.query;
+      const query = req.query as unknown as QueryInsightsInput;
       const insights = await this.insightsService.getInsights(req.user.id, query);
       
-      return ResponseUtil.success(res, { insights });
+      ResponseUtil.success(res, { insights });
     } catch (error) {
       next(error);
     }
   };
 
-  generateInsights = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  generateInsights = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
       const result = await this.insightsService.generateInsights(req.user.id);
       
-      return ResponseUtil.success(res, result);
+      ResponseUtil.success(res, result);
     } catch (error) {
       next(error);
     }
   };
 
-  markAsRead = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  markAsRead = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
       const { id } = req.params;
       const insight = await this.insightsService.markAsRead(id, req.user.id);
       
-      return ResponseUtil.success(res, { insight }, 'Insight marked as read');
+      ResponseUtil.success(res, { insight }, 'Insight marked as read');
     } catch (error) {
       next(error);
     }
   };
 
-  deleteInsight = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  deleteInsight = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
       const { id } = req.params;
       const result = await this.insightsService.deleteInsight(id, req.user.id);
       
-      return ResponseUtil.success(res, result);
+      ResponseUtil.success(res, result);
     } catch (error) {
       next(error);
     }

@@ -11,45 +11,48 @@ export class StatisticsController {
     this.statisticsService = new StatisticsService();
   }
 
-  getDashboard = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  getDashboard = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
       const dashboard = await this.statisticsService.getDashboard(req.user.id);
       
-      return ResponseUtil.success(res, dashboard);
+      ResponseUtil.success(res, dashboard);
     } catch (error) {
       next(error);
     }
   };
 
-  getProgress = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  getProgress = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
-      const query: QueryProgressInput = req.query;
+      const query = req.query as unknown as QueryProgressInput;
       const progress = await this.statisticsService.getProgress(req.user.id, query);
       
-      return ResponseUtil.success(res, progress);
+      ResponseUtil.success(res, progress);
     } catch (error) {
       next(error);
     }
   };
 
-  getHeatmap = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  getHeatmap = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
-        return ResponseUtil.unauthorized(res);
+        ResponseUtil.unauthorized(res);
+        return;
       }
 
-      const query: QueryHeatmapInput = req.query;
+      const query = req.query as unknown as QueryHeatmapInput;
       const heatmap = await this.statisticsService.getHeatmap(req.user.id, query);
       
-      return ResponseUtil.success(res, heatmap);
+      ResponseUtil.success(res, heatmap);
     } catch (error) {
       next(error);
     }
