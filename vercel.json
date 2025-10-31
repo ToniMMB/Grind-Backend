@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "npx prisma generate && node compile.mjs",
+  "buildCommand": "npx prisma generate && ./node_modules/.bin/tsc",
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "framework": null
