@@ -1,8 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "bash vercel-build.sh",
+  "buildCommand": "npm run vercel-build",
   "outputDirectory": "dist",
   "installCommand": "npm install",
-  "framework": null,
-  "regions": ["iad1"]
+  "framework": null
 }

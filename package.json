@@ -6,8 +6,8 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "node_modules/.bin/tsc",
     "start": "node dist/server.js",
+    "build": "tsc",
     "vercel-build": "prisma generate && npm run build",
     "postinstall": "npm run prisma:generate",
     "setup": "node scripts/setup.cjs",
