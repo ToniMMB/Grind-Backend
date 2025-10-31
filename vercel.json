@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "npx prisma generate && node node_modules/typescript/bin/tsc",
+  "buildCommand": "npx prisma generate && node --input-type=commonjs node_modules/typescript/bin/tsc",
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "framework": null
