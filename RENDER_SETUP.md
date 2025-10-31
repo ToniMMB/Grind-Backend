@@ -52,15 +52,16 @@ En la sección "Environment Variables", añade TODAS estas (el orden es importan
 |-----|-------|-------|
 | `NODE_ENV` | `production` | Mixed |
 | `PORT` | `3000` | Mixed |
+| `FRONTEND_URL` | `https://focus-opal-ai.vercel.app` | Mixed |
+| `CORS_ORIGIN` | `https://focus-opal-ai.vercel.app` | Mixed |
+| `JWT_ACCESS_EXPIRY` | `15m` | Mixed |
+| `JWT_REFRESH_EXPIRY` | `7d` | Mixed |
 | `DATABASE_URL` | `[Tu URL de Supabase con ?pgbouncer=true]` | Private |
 | `DIRECT_URL` | `[Tu URL de Supabase sin ?pgbouncer]` | Private |
 | `JWT_ACCESS_SECRET` | `[Tu secret aleatorio de 32+ caracteres]` | Private |
-| `JWT_ACCESS_EXPIRY` | `15m` | Mixed |
 | `JWT_REFRESH_SECRET` | `[Tu secret aleatorio diferente]` | Private |
-| `JWT_REFRESH_EXPIRY` | `7d` | Mixed |
-| `REDIS_URL` | `[Tu URL de Redis, si tienes]` | Private |
-| `CORS_ORIGIN` | `https://focus-opal-ai.vercel.app` | Mixed |
 | `ANTHROPIC_API_KEY` | `[Tu API key de Anthropic]` | Private |
+| `REDIS_URL` | `[Tu URL de Redis, si tienes]` | Private |
 
 ### 🔑 Cómo obtener los valores:
 

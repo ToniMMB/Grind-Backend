@@ -28,6 +28,7 @@
 ### Mixed (públicas, ok mostrar):
 - [ ] `NODE_ENV` = `production`
 - [ ] `PORT` = `3000`
+- [ ] `FRONTEND_URL` = `https://focus-opal-ai.vercel.app`
 - [ ] `JWT_ACCESS_EXPIRY` = `15m`
 - [ ] `JWT_REFRESH_EXPIRY` = `7d`
 - [ ] `CORS_ORIGIN` = `https://focus-opal-ai.vercel.app`
