@@ -8,7 +8,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "vercel-build": "prisma generate && npx tsc --project tsconfig.json",
+    "vercel-build": "prisma generate && npm run build",
     "postinstall": "npm run prisma:generate",
     "setup": "node scripts/setup.cjs",
     "verify": "node scripts/verify-env.cjs",
