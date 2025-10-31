@@ -1,11 +1,17 @@
 #!/usr/bin/env node
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-// Load and execute TypeScript compiler
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 try {
-  require('typescript/bin/tsc');
+  // Execute tsc directly as a child process
+  execSync(`node node_modules/typescript/bin/tsc`, {
+    cwd: __dirname,
+    stdio: 'inherit',
+  });
 } catch (error) {
-  console.error('Failed to compile:', error);
   process.exit(1);
 }
