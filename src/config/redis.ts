@@ -3,8 +3,19 @@ import env from './env.js';
 
 let redis: ReturnType<typeof createClient> | null = null;
 
-// Solo crear cliente Redis si está configurado
-if (env.REDIS_URL) {
+// Solo crear cliente Redis si está configurado Y es una URL válida
+const isValidRedisUrl = (url: string | undefined): boolean => {
+  if (!url) return false;
+  // Verificar que sea una URL válida y no un placeholder/texto
+  try {
+    new URL(url);
+    return url.startsWith('redis://') || url.startsWith('rediss://');
+  } catch {
+    return false;
+  }
+};
+
+if (isValidRedisUrl(env.REDIS_URL)) {
   redis = createClient({
     url: env.REDIS_URL,
   });
