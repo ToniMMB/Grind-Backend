@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "npx prisma generate && ./node_modules/.bin/tsc",
+  "buildCommand": "npm run vercel-build",
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "framework": null
