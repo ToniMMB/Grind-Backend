@@ -221,3 +221,5 @@ VITE_API_URL=http://localhost:3000
 4. ✅ Inicia con `npm run dev`
 5. ✅ Verifica `/health` en el navegador
 
+
+
