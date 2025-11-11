@@ -2,9 +2,10 @@ import rateLimit from 'express-rate-limit';
 import env from '../config/env.js';
 
 export const rateLimiter = rateLimit({
-  windowMs: env.RATE_LIMIT_WINDOW_MS,
+  // Aumentar el tiempo de ventana en desarrollo para permitir más peticiones
+  windowMs: env.NODE_ENV === 'production' ? env.RATE_LIMIT_WINDOW_MS : 60000, // 1 minuto en dev, 15 min en prod
   // Aumentar límite en desarrollo para evitar error 429
-  max: env.NODE_ENV === 'production' ? env.RATE_LIMIT_MAX_REQUESTS : 500,
+  max: env.NODE_ENV === 'production' ? env.RATE_LIMIT_MAX_REQUESTS : 2000,
   message: 'Too many requests from this IP, please try again later',
   standardHeaders: true,
   legacyHeaders: false,

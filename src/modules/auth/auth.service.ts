@@ -1,4 +1,4 @@
-import prisma from '../../config/database.js';
+import prisma, { ensureDatabaseConnection } from '../../config/database.js';
 import { PasswordUtil } from '../../utils/password.util.js';
 import { JWTUtil } from '../../utils/jwt.util.js';
 import { ApiError } from '../../middlewares/error.middleware.js';
@@ -7,6 +7,9 @@ import { PREDEFINED_BLOCKS } from '../../constants/predefined-blocks.js';
 
 export class AuthService {
   async register(data: RegisterInput) {
+    // Asegurar conexión a la base de datos
+    await ensureDatabaseConnection();
+    
     // Verificar si el usuario ya existe
     const existingUser = await prisma.user.findUnique({
       where: { email: data.email },
@@ -70,6 +73,9 @@ export class AuthService {
   }
 
   async login(data: LoginInput) {
+    // Asegurar conexión a la base de datos
+    await ensureDatabaseConnection();
+    
     // Buscar usuario
     const user = await prisma.user.findUnique({
       where: { email: data.email },
