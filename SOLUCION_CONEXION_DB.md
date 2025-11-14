@@ -114,3 +114,4 @@ Una vez que la conexión funcione, deberías ver en los logs del servidor:
 
 **💡 Tip:** El código ahora tiene mejor manejo de errores y te mostrará mensajes más claros sobre qué está fallando.
 
+

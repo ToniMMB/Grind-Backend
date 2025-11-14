@@ -14,6 +14,9 @@ import focusSessionsRoutes from './modules/focus-sessions/focus-sessions.routes.
 import tasksRoutes from './modules/tasks/tasks.routes.js';
 import statisticsRoutes from './modules/statistics/statistics.routes.js';
 import insightsRoutes from './modules/insights/insights.routes.js';
+import identitiesRoutes from './modules/identities/identities.routes.js';
+import checkInsRoutes from './modules/check-ins/check-ins.routes.js';
+import photosRoutes from './modules/photos/photos.routes.js';
 
 const app = express();
 
@@ -123,6 +126,9 @@ app.use('/api/focus-sessions', focusSessionsRoutes);
 app.use('/api/tasks', tasksRoutes);
 app.use('/api/statistics', statisticsRoutes);
 app.use('/api/insights', insightsRoutes);
+app.use('/api/identities', identitiesRoutes);
+app.use('/api/check-ins', checkInsRoutes);
+app.use('/api/photos', photosRoutes);
 
 // 404 handler
 app.use(notFoundMiddleware);

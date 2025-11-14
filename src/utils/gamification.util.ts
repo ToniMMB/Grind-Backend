@@ -79,5 +79,40 @@ export class GamificationUtil {
   static calculateXPForDailyGoal(): number {
     return 200;
   }
+
+  /**
+   * Calcula XP para bloques DO según nueva fórmula V3
+   * XP_FINAL = (XP_BASE × % cumplimiento) - (breaks × 10 XP)
+   */
+  static calculateBlockXP(
+    plannedDuration: number, // minutos planeados
+    actualDuration: number,  // minutos realmente enfocado
+    breaks: number           // número de breaks tomados
+  ): number {
+    const XP_BASE_PER_HOUR = 100;
+    const XP_PENALTY_PER_BREAK = 10;
+    
+    const hours = plannedDuration / 60;
+    const xpBase = XP_BASE_PER_HOUR * hours;
+    
+    const completionPercentage = actualDuration / plannedDuration;
+    
+    const xpFromCompletion = xpBase * completionPercentage;
+    const xpPenalty = breaks * XP_PENALTY_PER_BREAK;
+    
+    return Math.max(0, Math.round(xpFromCompletion - xpPenalty));
+  }
+
+  /**
+   * Calcula XP para bloques DONT (honor system)
+   */
+  static calculateDontBlockXP(completed: boolean, hasPhoto: boolean): number {
+    const BASE_XP = 100;
+    const PHOTO_BONUS = 50;
+    
+    if (!completed) return 0;
+    
+    return BASE_XP + (hasPhoto ? PHOTO_BONUS : 0);
+  }
 }
 

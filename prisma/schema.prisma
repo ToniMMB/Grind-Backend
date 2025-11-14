@@ -9,22 +9,22 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  password      String
-  name          String?
-  avatar        String?
-  
+  id       String  @id @default(uuid())
+  email    String  @unique
+  password String
+  name     String?
+  avatar   String?
+
   // Gamificación
-  level         Int       @default(1)
-  xp            Int       @default(0)
-  currentStreak Int       @default(0)
-  longestStreak Int       @default(0)
+  level          Int       @default(1)
+  xp             Int       @default(0)
+  currentStreak  Int       @default(0)
+  longestStreak  Int       @default(0)
   lastActiveDate DateTime?
-  
+
   // Objetivos
-  dailyGoalMinutes Int    @default(300)
-  
+  dailyGoalMinutes Int @default(300)
+
   // Relaciones
   settings      UserSettings?
   focusBlocks   FocusBlock[]
@@ -32,23 +32,26 @@ model User {
   tasks         Task[]
   statistics    DailyStatistic[]
   insights      AIInsight[]
-  
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  identities    Identity[]
+  checkIns      BlockCheckIn[]
+  photos        BlockPhoto[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model UserSettings {
-  id                String   @id @default(uuid())
-  userId            String   @unique
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  pushEnabled       Boolean  @default(true)
-  hapticEnabled     Boolean  @default(true)
-  soundEnabled      Boolean  @default(true)
-  darkMode          Boolean  @default(true)
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  pushEnabled   Boolean @default(true)
+  hapticEnabled Boolean @default(true)
+  soundEnabled  Boolean @default(true)
+  darkMode      Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum BlockType {
@@ -56,29 +59,43 @@ enum BlockType {
   CUSTOM
 }
 
+enum ActivityType {
+  DO
+  DONT
+}
+
 model FocusBlock {
-  id            String     @id @default(uuid())
-  userId        String
-  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  name          String
-  description   String?
-  type          BlockType  @default(CUSTOM)
-  icon          String?
-  color         String?
-  
-  startTime     String
-  endTime       String
-  daysOfWeek    Int[]
-  
-  isActive      Boolean    @default(true)
-  
-  sessions      FocusSession[]
-  
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name         String
+  description  String?
+  type         BlockType    @default(CUSTOM)
+  activityType ActivityType @default(DO)
+  icon         String?
+  color        String?
+
+  startTime  String
+  endTime    String
+  daysOfWeek Int[]
+
+  isActive    Boolean @default(true)
+  isRecurrent Boolean @default(true)
+
+  // Para modificaciones temporales de bloques troncales
+  parentBlockId String?
+  isTemporary   Boolean   @default(false)
+  validUntil    DateTime?
+
+  sessions FocusSession[]
+  checkIns BlockCheckIn[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([userId])
+  @@index([userId, activityType])
 }
 
 enum SessionStatus {
@@ -89,29 +106,29 @@ enum SessionStatus {
 }
 
 model FocusSession {
-  id              String        @id @default(uuid())
-  userId          String
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  focusBlockId    String?
-  focusBlock      FocusBlock?   @relation(fields: [focusBlockId], references: [id], onDelete: SetNull)
-  
-  name            String
-  status          SessionStatus @default(ACTIVE)
-  
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  focusBlockId String?
+  focusBlock   FocusBlock? @relation(fields: [focusBlockId], references: [id], onDelete: SetNull)
+
+  name   String
+  status SessionStatus @default(ACTIVE)
+
   startTime       DateTime
   endTime         DateTime?
   plannedDuration Int
   actualDuration  Int?
-  
-  pausedAt        DateTime?
-  totalPaused     Int          @default(0)
-  
-  xpEarned        Int          @default(0)
-  
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-  
+
+  pausedAt    DateTime?
+  totalPaused Int       @default(0)
+
+  xpEarned Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([userId, startTime])
   @@index([status])
 }
@@ -123,44 +140,44 @@ enum TaskPriority {
 }
 
 model Task {
-  id            String       @id @default(uuid())
-  userId        String
-  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  title         String
-  description   String?
-  priority      TaskPriority @default(MEDIUM)
-  
-  completed     Boolean      @default(false)
-  completedAt   DateTime?
-  
-  dueDate       DateTime?
-  category      String?
-  order         Int          @default(0)
-  
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+  priority    TaskPriority @default(MEDIUM)
+
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+
+  dueDate  DateTime?
+  category String?
+  order    Int       @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([userId, completed])
 }
 
 model DailyStatistic {
-  id            String   @id @default(uuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  date          DateTime
-  
-  totalMinutes  Int      @default(0)
-  tasksCompleted Int     @default(0)
-  sessionsCount Int      @default(0)
-  xpEarned      Int      @default(0)
-  
-  goalReached   Boolean  @default(false)
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date DateTime
+
+  totalMinutes   Int @default(0)
+  tasksCompleted Int @default(0)
+  sessionsCount  Int @default(0)
+  xpEarned       Int @default(0)
+
+  goalReached Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([userId, date])
   @@index([userId, date])
 }
@@ -174,22 +191,84 @@ enum InsightType {
 }
 
 model AIInsight {
-  id            String      @id @default(uuid())
-  userId        String
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  type          InsightType
-  title         String
-  message       String
-  
-  priority      Int         @default(0)
-  isRead        Boolean     @default(false)
-  
-  validFrom     DateTime    @default(now())
-  validUntil    DateTime?
-  
-  createdAt     DateTime    @default(now())
-  
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type    InsightType
+  title   String
+  message String
+
+  priority Int     @default(0)
+  isRead   Boolean @default(false)
+
+  validFrom  DateTime  @default(now())
+  validUntil DateTime?
+
+  createdAt DateTime @default(now())
+
   @@index([userId, isRead])
 }
 
+// Sistema de identidades transformacionales
+model Identity {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type     String // 'athlete', 'student', 'free_from_smoking', etc.
+  category String // 'fitness', 'learning', 'habit_breaking'
+  name     String // Display name: "Atleta", "Estudiante", "Libre del cigarro"
+
+  daysProgress Int       @default(0)
+  isUnlocked   Boolean   @default(false)
+  unlockedAt   DateTime?
+
+  lastMilestone Int @default(0) // Último milestone alcanzado (0, 3, 7, 14, 21, 30)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, type])
+  @@index([userId, isUnlocked])
+}
+
+// Check-ins para bloques NO HACER (honor system)
+model BlockCheckIn {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  focusBlockId String
+  focusBlock   FocusBlock @relation(fields: [focusBlockId], references: [id], onDelete: Cascade)
+
+  date      DateTime // Fecha del bloque (solo fecha, sin hora)
+  completed Boolean // true = cumplió, false = falló
+
+  photoId String?
+  photo   BlockPhoto? @relation(fields: [photoId], references: [id], onDelete: SetNull)
+
+  xpEarned Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, focusBlockId, date])
+  @@index([userId, date])
+}
+
+// Fotos de evidencia para accountability
+model BlockPhoto {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  url       String // URL de la imagen en Supabase Storage
+  blockType String // 'do' | 'dont'
+  blockName String
+
+  uploadedAt DateTime @default(now())
+
+  checkIns BlockCheckIn[]
+
+  @@index([userId, uploadedAt])
+}

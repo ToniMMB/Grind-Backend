@@ -6,6 +6,8 @@ const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
 export const createFocusBlockSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters').max(100),
   description: z.string().optional(),
+  activityType: z.enum(['DO', 'DONT']).default('DO'),
+  isRecurrent: z.boolean().default(true),
   icon: z.string().optional(),
   color: z.string().optional(),
   startTime: z.string().regex(timeRegex, 'Invalid time format. Use HH:mm'),
@@ -28,6 +30,8 @@ export const createFocusBlockSchema = z.object({
 export const updateFocusBlockSchema = z.object({
   name: z.string().min(3).max(100).optional(),
   description: z.string().optional(),
+  activityType: z.enum(['DO', 'DONT']).optional(),
+  isRecurrent: z.boolean().optional(),
   icon: z.string().optional(),
   color: z.string().optional(),
   startTime: z.string().regex(timeRegex, 'Invalid time format. Use HH:mm').optional(),

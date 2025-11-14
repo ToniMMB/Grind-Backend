@@ -118,3 +118,4 @@ Después de hacer los cambios:
 
 **Última actualización:** Después de hacer estos cambios, ejecuta `node scripts/test-db-connection.cjs` para verificar.
 
+
